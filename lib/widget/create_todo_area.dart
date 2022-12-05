@@ -2,6 +2,8 @@ import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../model/todo.dart';
+import '../provider/todos_provider.dart';
 import '../style/todo_style.dart';
 
 class CreateTodoArea extends ConsumerStatefulWidget {
@@ -54,6 +56,17 @@ class _CreateTodoAreaState extends ConsumerState<CreateTodoArea> {
                     ? null
                     : () async {
                         if (_formKey.currentState!.validate()) {
+                          ref
+                              .read(
+                                todosProvider.notifier,
+                              )
+                              .addTodo(
+                                Todo(
+                                  id: uuid.v4(),
+                                  text: name,
+                                  isDone: false,
+                                ),
+                              );
                           setState(() {
                             name = '';
                           });

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../model/todo.dart';
+import '../provider/todos_provider.dart';
 
 class TodoItem extends ConsumerWidget {
   const TodoItem({super.key, required this.todo});
@@ -14,10 +15,22 @@ class TodoItem extends ConsumerWidget {
         title: Text(todo.text),
         leading: Checkbox(
           value: todo.isDone,
-          onChanged: (bool? value) {},
+          onChanged: (bool? value) {
+            ref
+                .read(
+                  todosProvider.notifier,
+                )
+                .toggle(todo.id);
+          },
         ),
         trailing: GestureDetector(
-          onTap: () async {},
+          onTap: () async {
+            ref
+                .read(
+                  todosProvider.notifier,
+                )
+                .removeTodo(todo.id);
+          },
           child: Container(
             padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
