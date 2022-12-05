@@ -8,6 +8,42 @@ class TodoItem extends ConsumerWidget {
   const TodoItem({super.key, required this.todo});
   final Todo todo;
 
+  Future<void> _showMyDialog(BuildContext context, WidgetRef ref) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('ToDoの削除'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('本当に削除してよろしいですか？'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'Cancel'),
+              child: const Text('キャンセル'),
+            ),
+            TextButton(
+              onPressed: () async {
+                ref
+                    .read(
+                      todosProvider.notifier,
+                    )
+                    .removeTodo(todo.id);
+                Navigator.pop(context, 'OK');
+              },
+              child: const Text('削除する'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Card(
@@ -25,11 +61,7 @@ class TodoItem extends ConsumerWidget {
         ),
         trailing: GestureDetector(
           onTap: () async {
-            ref
-                .read(
-                  todosProvider.notifier,
-                )
-                .removeTodo(todo.id);
+            await _showMyDialog(context, ref);
           },
           child: Container(
             padding: const EdgeInsets.all(5),
